@@ -48,14 +48,14 @@ const uploadFileIntoS3 = async file => {
   };
 
   try {
-    await s3.upload(options);
+    await s3.upload(options).promise();
     console.log(
       `File uploaded into S3 bucket: "${
         process.env.file_s3_bucket_name
       }"`
     );
-    const url = `https://${options.Bucket}.s3.amazonaws.com/${Key}.${ext}`
-    return url;
+    const url = `https://${options.Bucket}.s3.amazonaws.com/${options.Key}`
+    return {"url": url};
   } catch (err) {
     console.error(err);
     throw err;
