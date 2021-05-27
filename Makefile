@@ -1,2 +1,2 @@
 pack:
-		git archive HEAD -o api.zip
+		git archive HEAD -o package.zip
