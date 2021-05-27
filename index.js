@@ -1,3 +1,8 @@
+const Multipart = require("lambda-multipart");
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
+const uuidv4 = require("uuid/v4");
+
 exports.handler = async (event) => {
   const { fields, files } = await parseMultipartFormData(event);
 
