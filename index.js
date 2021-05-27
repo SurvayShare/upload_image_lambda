@@ -1,7 +1,7 @@
 const Multipart = require("lambda-multipart");
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
-const uuidv4 = require("uuid/v4");
+const { v4: uuidv4 } = require('uuid');
 
 exports.handler = async (event) => {
   const { fields, files } = await parseMultipartFormData(event);
@@ -13,14 +13,15 @@ exports.handler = async (event) => {
     };
   }
 
-  await Promise.all(
+  const result = await Promise.all(
     files.map(async file => {
-      await uploadFileIntoS3(file);
+      return await uploadFileIntoS3(file);
     })
   );
 
   return {
-    statusCode: 201
+    statusCode: 201,
+    body: JSON.stringify(result)
   };
 };
 
@@ -47,12 +48,14 @@ const uploadFileIntoS3 = async file => {
   };
 
   try {
-    await s3.upload(options).promise();
+    await s3.upload(options);
     console.log(
       `File uploaded into S3 bucket: "${
         process.env.file_s3_bucket_name
-      }", with key: "${fileName}"`
+      }"`
     );
+    const url = `https://${options.Bucket}.s3.amazonaws.com/${Key}.${ext}`
+    return url;
   } catch (err) {
     console.error(err);
     throw err;
