@@ -40,10 +40,9 @@ const parseMultipartFormData = async event => {
 };
 
 const uploadFileIntoS3 = async file => {
-  const ext = getFileExtension(file);
   const options = {
     Bucket: process.env.file_s3_bucket_name,
-    Key: `${uuidv4()}.${ext}`,
+    Key: uuidv4(),
     Body: file
   };
 
@@ -60,18 +59,4 @@ const uploadFileIntoS3 = async file => {
     console.error(err);
     throw err;
   }
-};
-
-const getFileExtension = file => {
-  const headers = file["headers"];
-  if (headers == null) {
-    throw new Error(`Missing "headers" from request`);
-  }
-
-  const contentType = headers["content-type"];
-  if (contentType == "image/jpeg") {
-    return "jpg";
-  }
-
-  throw new Error(`Unsupported content type "${contentType}".`);
 };
